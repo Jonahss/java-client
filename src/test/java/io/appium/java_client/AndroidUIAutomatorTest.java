@@ -1,19 +1,19 @@
 package io.appium.java_client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.remote.MobilePlatform;
-
-import java.io.File;
-import java.net.URL;
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.io.File;
+import java.net.URL;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test -android uiautomator locator strategy
@@ -26,12 +26,23 @@ public class AndroidUIAutomatorTest {
   public void setup() throws Exception {
     File appDir = new File("src/test/java/io/appium/java_client");
     File app = new File(appDir, "ApiDemos-debug.apk");
+    String appOnGithub = "https://github.com/appium/java-client/raw/master/src/test/java/io/appium/java_client/ApiDemos-debug.apk";
+
+    String sauceUsername = System.getenv("SAUCE_USERNAME");
+    String sauceAccessKey = System.getenv("SAUCE_ACCESS_KEY");
+    URL serverUrl = new URL("http://" + sauceUsername + ":" + sauceAccessKey + "@ondemand.saucelabs.com:80/wd/hub");
+
     DesiredCapabilities capabilities = new DesiredCapabilities();
     capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "");
     capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator");
     capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
-    capabilities.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
-    driver = new AppiumDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+    capabilities.setCapability(MobileCapabilityType.APP, appOnGithub);
+
+    // sauce caps
+    capabilities.setCapability("name", "java-client: AndroidUIAutomatorTest");
+    capabilities.setCapability("appium-version", "1.2.2");
+
+    driver = new AppiumDriver(serverUrl, capabilities);
   }
 
   @After
